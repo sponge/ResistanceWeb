@@ -3,6 +3,7 @@
 var app = require('http').createServer(handler)
 var io = require('socket.io')(app);
 var fs = require('fs');
+var _ = require('lodash');
 
 var GameFlow = require('./gameflow.js');
 var Rooms = require('./rooms.js');
@@ -27,13 +28,17 @@ function handler(req, res) {
         });
 }
 
+
+// FSM has switched states, let clients know so they can update their UI
 GameFlow.on("transition", function (data) {
     io.in(data.client.id).emit("transition", { from: data.fromState, to: data.toState });
     console.log("%s just transitioned from %s to %s", data.client.id, data.fromState, data.toState);
 });
 
+// the FSM has sent an event that it has modified the game state that gets sent to clients
 GameFlow.on("gameStateChanged", function (client) {
-    io.in(client.id).emit("gameStateChanged", client.game);
+    var message = _.assign({}, client.game, { players: client.players, spectators: client.spectators });
+    io.in(client.id).emit("gameStateChanged", message);
 });
 
 GameFlow.on("*", function (eventName, data) {
@@ -64,16 +69,18 @@ io.on('connection', function (socket) {
         var userInfo = Users.bySocket.get(socket);
         Users.deleteUser(userInfo.name);
         if (userInfo.room) {
-            Rooms.leaveRoom(userInfo.room);
+            Rooms.leaveRoom(userInfo, userInfo.room);
         }
     });
     
+    // user wants to create a new room
     socket.on('create', function (room) {
         var userInfo = Users.bySocket.get(socket);
         var room = Rooms.createRoom({ owner: userInfo.id });
         Rooms.joinRoom(userInfo, room);
     });
-
+    
+    // user wants to join an existing room
     socket.on('join', function (room) {
         var room = Rooms.list[room];
         if (!room) {
@@ -83,7 +90,8 @@ io.on('connection', function (socket) {
 
         Rooms.joinRoom(Users.bySocket.get(socket), room);
     });
-
+    
+    // user wants a list of rooms
     socket.on('list', function () {
         socket.emit("rooms", Rooms.getList());
     });

@@ -24,6 +24,8 @@ module.exports = {
         }
 
         var roomInfo = _.defaults(options, this.defaults);
+        roomInfo.players = [];
+        roomInfo.spectators = [];
         options.id = id;
         if (!options.name) {
             roomInfo.name = options.owner + "'s Room";
@@ -38,25 +40,32 @@ module.exports = {
     
     joinRoom: function (player, room) {
         var gs = this.gameState.get(room);
+        if (player.room) {
+            this.leaveRoom(player, player.room);
+        }
+        player.room = room.id
+        player.socket.join(room.id);
         // the FSM doesn't care about all the player state, just pass in what it needs to operate.
         // no references, only serializable bits
         GameFlow.joinPlayer(gs, { id: player.id, name: player.name });
-        player.room = room.id
-        player.socket.join(room.id);
-        player.socket.emit("transition", { from: room.__machina__['game-flow'].priorState, to: room.__machina__['game-flow'].state });
-        player.socket.emit("gameStateChanged", gs.game);
     },
 
-    leaveRoom: function (id) {
-        var room = this.list[id];
+    leaveRoom: function (player, room_id) {
+        var room = this.list[room_id];
+        var gs = this.gameState.get(room);
 
-        if (!room) {
+        if (!room || !gs) {
             return;
         }
+        
+        player.socket.leave(room.id);
+        GameFlow.leavePlayer(gs, player.id);
+        // FIXME: send something to the parting user to confirm part
 
         room.curPlayers--;
         if (room.curPlayers <= 0) {
-            delete this.list[id];
+            GameFlow.endGame(gs);
+            delete this.list[room_id];
         }
     },
  

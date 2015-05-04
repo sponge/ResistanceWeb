@@ -27,16 +27,14 @@ module.exports = new machina.BehavioralFsm({
         'end-game': require('./endgame.js'),
     },
     
-    reset: function (client) {
-        this.handle(client, "_reset");
+    endGame: function (client) {
+        this.transition(client, "end-game");
     },
     
     defaultGameState: {
         round: 0,
         resistanceScore: 0,
         spyScore: 0,
-        players: [],
-        spectators: []
     },
     
     defaultPlayerState: {
@@ -54,11 +52,17 @@ module.exports = new machina.BehavioralFsm({
     joinPlayer: function (client, user) {
         var player = _.defaults(user, this.defaultPlayerState);
         if (this.handle(client, 'playerCanJoin')) {
-            client.game.players.push(player);
+            client.players.push(player);
         } else {
-            client.game.spectators.push(player);
+            client.spectators.push(player);
         }
         this.emit("playerJoined", player);
+        this.emit("gameStateChanged", client);
+    },
+
+    leavePlayer: function (client, user_id) {
+        client.players = _.reject(client.players, { 'id': user_id });
+        client.spectators = _.reject(client.spectators, { 'id': user_id });
         this.emit("gameStateChanged", client);
     }
 });
