@@ -1,0 +1,52 @@
+﻿<script src="/socket.io/socket.io.js"></script>
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <button id="listbtn">list</button>
+    <button id="createbtn"onclick="createRoom">create</button><br />
+    <input id="room" placeholder="room id here" />
+    <button id="joinbtn">join</button>
+    <p>current state: <span id="state"></span></p>
+    <p>current gamestate:</p>
+    <p><pre id="gamestate"></pre></p>
+    <p>match list:</p>
+    <pre id="list"></pre>
+    <script>
+        localStorage.debug = 'socket.io-client:socket';
+        var randomname = "Guest" + (Math.floor(Math.random() * (999999 - 100000)) + 100000);
+        var socket = io('http://localhost?name=' + randomname);
+        socket.on('rooms', function (data) {
+            document.getElementById("list").innerHTML = JSON.stringify(data);
+        });
+
+        socket.on('transition', function (data) {
+            document.getElementById("state").innerHTML = JSON.stringify(data);
+        });
+
+        socket.on('gameStateChanged', function (data) {
+            document.getElementById("gamestate").innerHTML = JSON.stringify(data);
+        });
+
+        function listRooms() {
+            socket.emit("list");
+        }
+        document.getElementById("listbtn").addEventListener("click", listRooms);
+
+        function createRoom() {
+            socket.emit("create");
+        }
+        document.getElementById("createbtn").addEventListener("click", createRoom);
+
+        function joinRoom() {
+            socket.emit("join", document.getElementById("room").value);
+        }
+        document.getElementById("joinbtn").addEventListener("click", joinRoom);
+
+    </script>
+</body>
+</html>
