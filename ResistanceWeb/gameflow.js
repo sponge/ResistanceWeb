@@ -27,8 +27,10 @@ module.exports = new machina.BehavioralFsm({
         'end-game': require('./endgame.js'),
     },
     
-    endGame: function (client) {
-        this.transition(client, "end-game");
+    checkEndGame: function (client) {
+        if (client.players.length == 0) {
+            this.transition(client, "end-game");
+        }
     },
     
     defaultGameState: {

@@ -48,6 +48,7 @@ module.exports = {
         // the FSM doesn't care about all the player state, just pass in what it needs to operate.
         // no references, only serializable bits
         GameFlow.joinPlayer(gs, { id: player.id, name: player.name });
+        room.curPlayers = room.players.length + room.spectators.length;
     },
 
     leaveRoom: function (player, room_id) {
@@ -61,10 +62,10 @@ module.exports = {
         player.socket.leave(room.id);
         GameFlow.leavePlayer(gs, player.id);
         // FIXME: send something to the parting user to confirm part
-
-        room.curPlayers--;
+        
+        GameFlow.checkEndGame(gs);
+        room.curPlayers = room.players.length + room.spectators.length;
         if (room.curPlayers <= 0) {
-            GameFlow.endGame(gs);
             delete this.list[room_id];
         }
     },

@@ -2,6 +2,7 @@
 module.exports = {
     _onEnter: function (client) {
         if (client.players.length == 0 && client.spectators.length == 0) {
+            // i believe this essentially kills the FSM
             return;
         }
         client.timer = setTimeout(function () {
