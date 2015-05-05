@@ -23,6 +23,14 @@ module.exports = new machina.BehavioralFsm({
             this.transition(client, "end-game");
         }
     },
+
+    // game settings, variations
+    defaultGameSettings: Object.freeze({
+        numSpies: 2,
+        blindSpies: false,
+        trapper: false,
+        reverser: false,
+    }),
     
     // global game state. this will get reset to these values every time the match starts
     defaultGameState: Object.freeze({
@@ -42,6 +50,7 @@ module.exports = new machina.BehavioralFsm({
     
     // factory function, takes in room settings, and starts up the room into the lobby
     createGame: function (roomInfo) {
+        roomInfo.settings = _.defaults({}, this.defaultGameSettings);
         roomInfo.game = _.assign({}, this.defaultGameState);
         this.transition(roomInfo, "lobby");
         return roomInfo;

@@ -37,7 +37,11 @@ GameFlow.on("transition", function (data) {
 
 // the game FSM has sent an event that it has modified the game state that gets sent to clients
 GameFlow.on("gameStateChanged", function (client) {
-    var message = _.assign({}, client.game, { players: client.players, spectators: client.spectators });
+    var message = {};
+    message.players = _.assign({}, client.players);
+    message.spectators = _.assign({}, client.spectators);
+    message.game = _.assign({}, client.game);
+    message.settings = _.assign({}, client.settings);
     io.in(client.id).emit("gameStateChanged", message);
 });
 

@@ -12,26 +12,105 @@
     <button id="startbtn">start game</button><br />
     <input id="room" placeholder="room id here" />
     <button id="joinbtn">join</button>
-    <p>current state: <span id="state"></span></p>
-    <p>current gamestate:</p>
+    <p>some text that has something to do with the game:</p>
+    <pre id="gameinfo"></pre>
+    <p>current game info:</p>
     <p><pre id="gamestate"></pre></p>
+    <p>current players:</p>
+    <p><pre id="playerlist"></pre></p>
+
     <p>match list:</p>
     <pre id="list"></pre>
     <script>
         localStorage.debug = 'socket.io-client:socket';
         var randomname = "Guest" + (Math.floor(Math.random() * (999999 - 100000)) + 100000);
+        window.myId = randomname;
         var socket = io('http://localhost?name=' + randomname);
         socket.on('rooms', function (data) {
+            window.rooms = data;
             document.getElementById("list").innerHTML = JSON.stringify(data);
         });
 
         socket.on('transition', function (data) {
-            document.getElementById("state").innerHTML = JSON.stringify(data);
+            window.state = data.to;
+            renderState();
         });
 
         socket.on('gameStateChanged', function (data) {
-            document.getElementById("gamestate").innerHTML = JSON.stringify(data);
+            window.gs = data;
+            document.getElementById("gamestate").innerHTML = JSON.stringify(data.game);
+
+            var playertxt = '';
+            for (var i in data.players) {
+                playertxt += data.players[i].name + '\n';
+            }
+
+            for (var i in data.spectators) {
+                playertxt += data.spectators[i].name + '(spectator)\n';
+            }
+            document.getElementById("playerlist").innerHTML = playertxt;
+
+            renderState();
         });
+
+        function renderState() {
+            var txt;
+            switch (window.state) {
+                case "lobby":
+                    txt = 'Waiting for game to begin';
+                    break;
+
+                case "select-characters":
+                    var me = undefined;
+                    for (var i = 0; i < Object.keys(window.gs.players).length; i++) {
+                        if (window.gs.players[i].id == window.myId) {
+                            me = window.gs.players[i];
+                            break;
+                        }
+                    }
+
+                    if (me) {
+                        txt = 'your fate has been decided, you are ' + (me.team == 1 ? 'RESISTANCE!' : me.team == 2 ? 'A SPY!' : 'UNKNOWN!');
+                    } else {
+                        txt = "can't find you!";
+                    }
+
+                    break;
+
+                case "reveal":
+                    if (window.gs.settings.blindSpies) {
+                        txt = "You're blinded to the allegiances to everyone!";
+                        break;
+                    }
+
+                    var me = undefined;
+                    for (var i = 0; i < Object.keys(window.gs.players).length; i++) {
+                        if (window.gs.players[i].id == window.myId) {
+                            me = window.gs.players[i];
+                            break;
+                        }
+                    }
+
+                    if (me.team == 2) {
+                        txt = 'your spy buddies are: ';
+                        for (var i = 0; i < Object.keys(window.gs.players).length; i++) {
+                            if (window.gs.players[i].team == 2 && window.gs.players[i].id != window.myId ) {
+                                txt += window.gs.players[i].name + ' ';
+                                break;
+                            }
+                        }
+                    } else {
+                        txt = "you don't know anyone!";
+                    }
+
+                    break;
+
+                default:
+                    txt = 'Currently in state ' + window.state;
+            }
+
+            document.getElementById("gameinfo").innerText = txt;
+        }
 
         function listRooms() {
             socket.emit("list");

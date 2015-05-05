@@ -2,6 +2,7 @@
 var _ = require('lodash');
 module.exports = {
     publicCommands: ["changeSetting", "startGame"],
+    publicSettings: ["numSpies", "blindSpies", "trapper", "reverser"],
 
     _onEnter: function (client) {
         // we're back in the lobby. move all spectators into client slots
@@ -22,12 +23,17 @@ module.exports = {
         return true;
     },
     
-    startGame: function (client, command) {
+    startGame: function (client) {
         this.handle(client, "nextState");   
     },
     
-    changeSetting: function (client, command, data) {
-        console.log("not done yet");
+    changeSetting: function (client, data) {
+        if (this.states[client.__machina__.gameFlow.state].publicSettings.indexOf(data.setting) == -1) {
+            return false;
+        }
+        
+        client.settings[data.setting] = data.value;
+
         this.emit("gameStateChanged", client);
     },
 
