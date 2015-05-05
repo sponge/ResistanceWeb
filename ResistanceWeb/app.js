@@ -29,13 +29,13 @@ function handler(req, res) {
 }
 
 
-// FSM has switched states, let clients know so they can update their UI
+// game FSM has switched states, let clients know so they can update their UI
 GameFlow.on("transition", function (data) {
     io.in(data.client.id).emit("transition", { from: data.fromState, to: data.toState });
     console.log("%s just transitioned from %s to %s", data.client.id, data.fromState, data.toState);
 });
 
-// the FSM has sent an event that it has modified the game state that gets sent to clients
+// the game FSM has sent an event that it has modified the game state that gets sent to clients
 GameFlow.on("gameStateChanged", function (client) {
     var message = _.assign({}, client.game, { players: client.players, spectators: client.spectators });
     io.in(client.id).emit("gameStateChanged", message);
