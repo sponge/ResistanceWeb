@@ -4,7 +4,8 @@ module.exports = {
         client.timer = setTimeout(function () {
             this.handle(client, "nextState");
         }.bind(this), 2000);
-        client.round++;
+        client.game.turn++;
+        this.emit("gameStateChanged", client);
     },
     
     nextState: "vote",

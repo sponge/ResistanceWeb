@@ -9,6 +9,8 @@ module.exports = {
     nextState: "nominate",
     
     _onExit: function (client) {
+        client.game.round++;
         clearTimeout(client.timer);
+        this.emit("gameStateChanged", client);
     },
 };

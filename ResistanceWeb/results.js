@@ -17,6 +17,9 @@ module.exports = {
     endGame: "end-game",
     
     _onExit: function (client) {
+        client.game.round++;
+        client.game.turn = 0;
         clearTimeout(client.timer);
+        this.emit("gameStateChanged", client);
     },
 };

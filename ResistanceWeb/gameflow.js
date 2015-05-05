@@ -27,6 +27,7 @@ module.exports = new machina.BehavioralFsm({
     // global game state. this will get reset to these values every time the match starts
     defaultGameState: Object.freeze({
         round: 0,
+        turn: 0,
         resistanceScore: 0,
         spyScore: 0,
     }),

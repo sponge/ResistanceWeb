@@ -32,7 +32,7 @@ function handler(req, res) {
 // game FSM has switched states, let clients know so they can update their UI
 GameFlow.on("transition", function (data) {
     io.in(data.client.id).emit("transition", { from: data.fromState, to: data.toState });
-    console.log("%s just transitioned from %s to %s", data.client.id, data.fromState, data.toState);
+    console.log("%s transitioned from %s to %s", data.client.id.substr(-8, 8), data.fromState, data.toState);
 });
 
 // the game FSM has sent an event that it has modified the game state that gets sent to clients
