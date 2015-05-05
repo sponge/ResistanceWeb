@@ -58,6 +58,7 @@ module.exports = {
         // the game FSM doesn't care about all the player state, just pass in what it needs to operate.
         // no references, only serializable bits
         GameFlow.joinPlayer(gs, { id: player.id, name: player.name });
+        player.socket.emit("transition", { from: room.__machina__.gameFlow.priorState, to: room.__machina__.gameFlow.state });
     },
     
     // leave a room, update player object and game fsm

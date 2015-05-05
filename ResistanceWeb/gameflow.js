@@ -3,7 +3,7 @@ var machina = require('machina');
 var _ = require('lodash');
 
 module.exports = new machina.BehavioralFsm({
-    namespace: "game-flow",
+    namespace: "gameFlow",
     initialState: "lobby",
     
     states: {        
@@ -75,5 +75,5 @@ module.exports = new machina.BehavioralFsm({
         this.emit("gameStateChanged", client);
         // if a player has left, the match may be empty
         this.checkEndGame(client);
-    }
+    },
 });

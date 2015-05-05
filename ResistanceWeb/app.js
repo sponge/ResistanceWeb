@@ -96,4 +96,15 @@ io.on('connection', function (socket) {
         socket.emit("rooms", Rooms.getList());
     });
 
+    socket.on('command', function (command, data) {
+        var userInfo = Users.bySocket.get(socket);
+        if (!userInfo.room) {
+            socket.emit('error', 'Not in a room.');
+        }
+        
+        var room = Rooms.list[userInfo.room];
+        var gs = Rooms.gameState.get(room);
+        
+        GameFlow.handle(gs, 'userCommand', command, data);
+    });
 });
