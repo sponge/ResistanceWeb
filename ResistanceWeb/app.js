@@ -5,7 +5,7 @@ var io = require('socket.io')(app);
 var fs = require('fs');
 var _ = require('lodash');
 
-var GameFlow = require('./gameflow.js');
+var GameFlow = require('./fsm/gameflow.js');
 var Rooms = require('./rooms.js');
 var Users = require('./users.js');
 
@@ -68,7 +68,7 @@ io.on('connection', function (socket) {
     // send them the rooms list
     socket.emit("rooms", Rooms.getList());
     
-    // disconnect handler (FIXME: needs to leave room to update state)
+    // disconnect handler
     socket.on('disconnect', function (err) {
         var userInfo = Users.bySocket.get(socket);
         Users.deleteUser(userInfo.name);

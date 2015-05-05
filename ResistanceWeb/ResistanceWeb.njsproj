@@ -32,20 +32,23 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="app.js" />
-    <Compile Include="endgame.js" />
-    <Compile Include="gameflow.js" />
-    <Compile Include="lobby.js" />
-    <Compile Include="mission.js" />
-    <Compile Include="nominate.js" />
-    <Compile Include="results.js" />
-    <Compile Include="reveal.js" />
+    <Compile Include="fsm\endgame.js" />
+    <Compile Include="fsm\gameflow.js" />
+    <Compile Include="fsm\lobby.js" />
+    <Compile Include="fsm\mission.js" />
+    <Compile Include="fsm\nominate.js" />
+    <Compile Include="fsm\results.js" />
+    <Compile Include="fsm\reveal.js" />
+    <Compile Include="fsm\selectcharacters.js" />
+    <Compile Include="fsm\vote.js" />
     <Compile Include="rooms.js" />
-    <Compile Include="selectcharacters.js" />
     <Compile Include="users.js" />
-    <Compile Include="vote.js" />
     <Content Include="index.html" />
     <Content Include="package.json" />
     <Content Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="fsm\" />
   </ItemGroup>
   <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />

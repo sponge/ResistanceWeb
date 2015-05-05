@@ -1,7 +1,7 @@
 ﻿"use strict";
 var _ = require('lodash');
 var uuid = require('uuid');
-var GameFlow = require('./gameflow.js');
+var GameFlow = require('./fsm/gameflow.js');
 var Users = require('./users.js');
 
 module.exports = {
