@@ -16,6 +16,8 @@
     <pre id="gameinfo"></pre>
     <p>current game info:</p>
     <p><pre id="gamestate"></pre></p>
+    <p>current game settings:</p>
+    <p><pre id="gamesettings"></pre></p>
     <p>current players:</p>
     <p><pre id="playerlist"></pre></p>
 
@@ -39,6 +41,8 @@
         socket.on('gameStateChanged', function (data) {
             window.gs = data;
             document.getElementById("gamestate").innerHTML = JSON.stringify(data.game);
+
+            document.getElementById("gamesettings").innerHTML = JSON.stringify(data.settings);
 
             var playertxt = '';
             for (var i in data.players) {

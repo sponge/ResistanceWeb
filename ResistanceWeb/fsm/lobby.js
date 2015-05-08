@@ -2,7 +2,7 @@
 var _ = require('lodash');
 module.exports = {
     publicCommands: ["changeSetting", "startGame"],
-    publicSettings: ["numSpies", "blindSpies", "trapper", "reverser"],
+    publicSettings: ["numSpies", "blindSpies", "trapper", "reverser", "teamSizes"],
 
     _onEnter: function (client) {
         // we're back in the lobby. move all spectators into client slots
@@ -25,6 +25,16 @@ module.exports = {
     
     startGame: function (client) {
         this.handle(client, "nextState");   
+    },
+    
+    playerJoined: function (client, player) {
+        client.settings.numSpies = this.getDefaultSpyCount(client.players.length);
+        client.settings.teamSizes = this.getDefaultTeamSizes(client.players.length);
+    },
+    
+    playerLeft: function (client) {
+        client.settings.numSpies = this.getDefaultSpyCount(client.players.length);
+        client.settings.teamSizes = this.getDefaultTeamSizes(client.players.length);
     },
     
     changeSetting: function (client, data) {

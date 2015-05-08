@@ -5,15 +5,15 @@ module.exports = {
         this.emit("gameStateChanged", client);
         
         if (client.game.resistanceScore == 3 || client.game.spyScore == 3) {
-            client.timer = setTimeout(function () {
-                this.handle(client, "endGame");
-            }.bind(this), 2000);
+            this.handle(client, "endGame");
         } else {
-            this.handle(client, "nextState");
+            client.timer = setTimeout(function () {
+                this.handle(client, "continueGame");
+            }.bind(this), 3000);
         }
     },
     
-    nextState: "nominate",
+    continueGame: "nominate",
     endGame: "end-game",
     
     _onExit: function (client) {

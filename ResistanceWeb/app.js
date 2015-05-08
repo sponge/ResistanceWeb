@@ -28,7 +28,6 @@ function handler(req, res) {
         });
 }
 
-
 // game FSM has switched states, let clients know so they can update their UI
 GameFlow.on("transition", function (data) {
     io.in(data.client.id).emit("transition", { from: data.fromState, to: data.toState });
