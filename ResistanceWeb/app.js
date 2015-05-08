@@ -70,6 +70,7 @@ io.on('connection', function (socket) {
     // disconnect handler
     socket.on('disconnect', function (err) {
         var userInfo = Users.bySocket.get(socket);
+        console.log("User disconnected: name: %s, socket id: %s", userInfo.name, socket.id);
         Users.deleteUser(userInfo.name);
         if (userInfo.room) {
             Rooms.leaveRoom(userInfo, userInfo.room);

@@ -30,7 +30,7 @@ module.exports = new machina.BehavioralFsm({
     
     // if we don't have a single person connected, end the game
     checkEndGame: function (client) {
-        if (client.players.length == 0) {
+        if (client.players.length == 0 && client.__machina__.gameFlow.state != lobby) {
             this.transition(client, "end-game");
         }
     },

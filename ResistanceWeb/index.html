@@ -14,11 +14,11 @@
     <button id="joinbtn">join</button>
     <p>some text that has something to do with the game:</p>
     <pre id="gameinfo"></pre>
-    <p>current game info:</p>
+    <p>game info:</p>
     <p><pre id="gamestate"></pre></p>
-    <p>current game settings:</p>
+    <p>game settings:</p>
     <p><pre id="gamesettings"></pre></p>
-    <p>current players:</p>
+    <p>players:</p>
     <p><pre id="playerlist"></pre></p>
 
     <p>match list:</p>
@@ -27,7 +27,7 @@
         localStorage.debug = 'socket.io-client:socket';
         var randomname = "Guest" + (Math.floor(Math.random() * (999999 - 100000)) + 100000);
         window.myId = randomname;
-        var socket = io('http://localhost?name=' + randomname);
+        var socket = io('/?name=' + randomname);
         socket.on('rooms', function (data) {
             window.rooms = data;
             document.getElementById("list").innerHTML = JSON.stringify(data);
